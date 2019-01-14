@@ -18,13 +18,13 @@ const bindings: any = Object.keys(classMap).map(key => ({
 }));
 
 const converter = new showdown.Converter({
+  customizedHeaderId: true,
   disableForced4SpacesIndentedSublists: true,
   extensions: [...bindings],
+  ghCompatibleHeaderId: true,
   headerLevelStart: 3,
   tables: true
 });
-
-showdown.setFlavor("github");
 
 class App extends Component<IProps> {
   private textarea = React.createRef<HTMLTextAreaElement>();
