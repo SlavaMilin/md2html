@@ -17,10 +17,18 @@ const bindings: any = Object.keys(classMap).map(key => ({
   type: "output"
 }));
 
+const hrefs: any = () => ({
+  regex: /<a href="#(.+)">/g,
+  replace: (wn: any, href: any) => {
+    return `<a href="#${href}" id="${href}">`;
+  },
+  type: "output"
+});
+
 const converter = new showdown.Converter({
   customizedHeaderId: true,
   disableForced4SpacesIndentedSublists: true,
-  extensions: [...bindings],
+  extensions: [...bindings, hrefs],
   ghCompatibleHeaderId: true,
   headerLevelStart: 3,
   tables: true
