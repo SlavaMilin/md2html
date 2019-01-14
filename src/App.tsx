@@ -1,3 +1,4 @@
+import beautify from "js-beautify";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import showdown from "showdown";
@@ -34,13 +35,16 @@ const converter = new showdown.Converter({
   tables: true
 });
 
+const extractMarkdownToHtml = (markdown: string): string =>
+  beautify.html(converter.makeHtml(markdown), { indent_size: 2 });
+
 class App extends Component<IProps> {
   private textarea = React.createRef<HTMLTextAreaElement>();
 
   public componentDidMount(): void {
-    this.props.onConvertBtnClick(
-      converter.makeHtml(this.textarea.current!.value)
-    );
+    const markdown = this.textarea.current!.value;
+    const html = extractMarkdownToHtml(markdown);
+    this.props.onConvertBtnClick(html);
   }
 
   public render() {
@@ -83,9 +87,9 @@ class App extends Component<IProps> {
   }
 
   private onConvertBtnClick = () => {
-    this.props.onConvertBtnClick(
-      converter.makeHtml(this.textarea.current!.value)
-    );
+    const markdown = this.textarea.current!.value;
+    const html = extractMarkdownToHtml(markdown);
+    this.props.onConvertBtnClick(html);
   };
 }
 
