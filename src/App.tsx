@@ -2,10 +2,14 @@ import beautify from "js-beautify";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import showdown from "showdown";
+import Typograf from "typograf";
+import { IState } from "./redusers";
+
+const tp = new Typograf({ locale: ["ru", "en-US"] });
 
 interface IProps {
   html: string;
-  onConvertBtnClick: any;
+  onConvertBtnClick: (html: string) => void;
 }
 
 const classMap: { [key: string]: string } = {
@@ -20,7 +24,7 @@ const bindings: any = Object.keys(classMap).map(key => ({
 
 const hrefs: any = () => ({
   regex: /<a href="#(.+)">/g,
-  replace: (wn: any, href: any) => {
+  replace: (wn: string, href: string) => {
     return `<a href="#${href}" id="${href}">`;
   },
   type: "output"
@@ -35,16 +39,17 @@ const converter = new showdown.Converter({
   tables: true
 });
 
-const extractMarkdownToHtml = (markdown: string): string =>
-  beautify.html(converter.makeHtml(markdown), { indent_size: 2 });
+const extractMarkdownToHtml = (markdown: string): string => {
+  const html = converter.makeHtml(markdown);
+  const typographyHtml = tp.execute(html);
+  return beautify.html(typographyHtml, { indent_size: 2 });
+};
 
 class App extends Component<IProps> {
   private textarea = React.createRef<HTMLTextAreaElement>();
 
   public componentDidMount(): void {
-    const markdown = this.textarea.current!.value;
-    const html = extractMarkdownToHtml(markdown);
-    this.props.onConvertBtnClick(html);
+    this.onConvertBtnClick();
   }
 
   public render() {
@@ -93,12 +98,14 @@ class App extends Component<IProps> {
   };
 }
 
+const mapStateToProps = (state: IState) => ({
+  html: state.html
+});
+
 export default connect<any, any, any, any>(
-  state => ({
-    html: state.html
-  }),
+  mapStateToProps,
   dispatch => ({
-    onConvertBtnClick: (html: any) => {
+    onConvertBtnClick: (html: string) => {
       dispatch({ type: "HTML_MARKUP", payload: html });
     }
   })
