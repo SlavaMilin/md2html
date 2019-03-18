@@ -6,6 +6,7 @@ import Typograf from "typograf";
 import { IState } from "./redusers";
 
 const tp = new Typograf({ locale: ["ru", "en-US"] });
+tp.disableRule("common/punctuation/hellip");
 
 interface IProps {
   html: string;
