@@ -31,12 +31,19 @@ const hrefs: any = () => ({
   type: "output"
 });
 
+const tabs: any = () => ({
+  regex: /<p>(###[\w\-]+)<\/p>/g,
+  replace: (wn: string, tab: string) => tab,
+  type: "output"
+});
+
 const converter = new showdown.Converter({
   customizedHeaderId: true,
   disableForced4SpacesIndentedSublists: true,
-  extensions: [...bindings, hrefs],
+  extensions: [...bindings, hrefs, tabs],
   ghCompatibleHeaderId: true,
   headerLevelStart: 3,
+  requireSpaceBeforeHeadingText: true,
   tables: true
 });
 
@@ -71,7 +78,7 @@ class App extends Component<IProps> {
                 className="form-control"
                 rows={20}
                 ref={this.textarea}
-                defaultValue="#Тестовый заголовок"
+                defaultValue="# Тестовый заголовок"
               />
             </div>
             <div className="col-6">
